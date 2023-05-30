@@ -22,6 +22,7 @@ export class RecordsService {
 			}
 		} catch (error) {}
 		try {
+			console.log(dto);
 			const newRecord = await this.prismaService.record.create({
 				data: { ...dto },
 			});
@@ -81,7 +82,13 @@ export class RecordsService {
 
 	async update(id: string, dto: UpdateRecordDto) {
 		const tags = dto.tags;
-		console.log(dto);
+
+		const oldRecord = await this.prismaService.record.findUnique({
+			where: { id },
+		});
+
+		const isChangedSum = dto.sum && !(oldRecord.sum === dto.sum);
+		const changedSumDates = [...oldRecord.changedSumDates, new Date()];
 
 		try {
 			if (tags) {
@@ -101,11 +108,16 @@ export class RecordsService {
 		}
 
 		try {
-			const newRecord = await this.prismaService.record.update({
+			if (isChangedSum) {
+				return await this.prismaService.record.update({
+					where: { id },
+					data: { ...dto, changedSum: true, changedSumDates },
+				});
+			}
+			return await this.prismaService.record.update({
 				where: { id },
 				data: { ...dto },
 			});
-			return newRecord;
 		} catch (error) {
 			console.log(error);
 			throw new BadRequestException(error.message);

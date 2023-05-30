@@ -20,16 +20,18 @@ model Category {
 }
 
 model Record {
-  id           String    @id @default(uuid())
-  category     Category  @relation(fields: [categoryName], references: [name])
-  categoryName String
-  tags         String[]
-  name         String
-  date         DateTime
-  type         String
-  sum          Float
-  deleted      Boolean   @default(false)
-  deleteDate   DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt()
+  id              String     @id @default(uuid())
+  category        Category   @relation(fields: [categoryName], references: [name])
+  categoryName    String
+  tags            String[]
+  name            String
+  date            DateTime
+  type            String
+  sum             Float
+  deleted         Boolean    @default(false)
+  deleteDate      DateTime?
+  changedSum      Boolean    @default(false)
+  changedSumDates DateTime[] @default([])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt()
 }
