@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  name String @id @unique
+}
+
+model Category {
+  name   String   @id
+  Record Record[]
+}
+
+model Record {
+  id           String    @id @default(uuid())
+  category     Category  @relation(fields: [categoryName], references: [name])
+  categoryName String
+  tags         String[]
+  name         String
+  date         DateTime
+  type         String
+  sum          Float
+  deleted      Boolean   @default(false)
+  deleteDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt()
+}
